@@ -9,12 +9,16 @@ using UnityEngine;
 
 public class PaddleMovementSystem : JobComponentSystem
 {
-	public struct MoveJob : IJobForEach<PaddleMovementData, Translation>
+	protected override JobHandle OnUpdate(JobHandle inputDeps)
 	{
-		public float deltaTime;
-		public float yBound;
+		float deltaTime = Time.DeltaTime;
+		float yBound = GameManager.main.yBound;
 
-		public void Execute([ReadOnly] ref PaddleMovementData data, ref Translation trans)
+		JobHandle handle = Entities
+			.WithBurst()
+			.WithReadOnly(deltaTime)
+			.WithReadOnly(yBound)
+			.ForEach((ref Translation trans, in PaddleMovementData data) => 
 		{
 			float3 pos = trans.Value;
 			pos.y += data.speed * data.direction * deltaTime;
@@ -23,18 +27,9 @@ public class PaddleMovementSystem : JobComponentSystem
 			if (pos.y < -yBound) pos.y = -yBound;
 
 			trans.Value = pos;
-		}
-	}
+		}).Schedule(inputDeps);
 
-	protected override JobHandle OnUpdate(JobHandle inputDeps)
-	{
-		MoveJob job = new MoveJob
-		{
-			deltaTime = Time.DeltaTime,
-			yBound = GameManager.main.yBound
-		};
-
-		return job.Schedule(this, inputDeps);
+		return handle;
 	}
 
 }
