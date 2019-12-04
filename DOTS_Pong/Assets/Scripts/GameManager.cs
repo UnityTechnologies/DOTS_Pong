@@ -25,6 +25,9 @@ public class GameManager : MonoBehaviour
 	Entity ballEntityPrefab;
 	EntityManager manager;
 
+	WaitForSeconds oneSecond;
+	WaitForSeconds delay;
+
 	private void Awake()
 	{
 		if (main != null && main != this)
@@ -36,8 +39,11 @@ public class GameManager : MonoBehaviour
 		main = this;
 		playerScores = new int[2];
 
-		manager = World.Active.EntityManager;
+		manager = World.DefaultGameObjectInjectionWorld.EntityManager;
 		ballEntityPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(ballPrefab, World.Active);
+
+		oneSecond = new WaitForSeconds(1f);
+		delay = new WaitForSeconds(respawnDelay);
 
 		StartCoroutine(CountdownAndSpawnBall());
 	}
@@ -53,19 +59,16 @@ public class GameManager : MonoBehaviour
 	IEnumerator CountdownAndSpawnBall()
 	{
 		mainText.text = "Get Ready";
-		yield return new WaitForSeconds(respawnDelay);
+		yield return delay;
 
 		mainText.text = "3";
-		WaitForSeconds delay = new WaitForSeconds(1f);
-		yield return delay;
+		yield return oneSecond;
 
 		mainText.text = "2";
-
-		yield return delay;
+		yield return oneSecond;
 
 		mainText.text = "1";
-
-		yield return delay;
+		yield return oneSecond;
 
 		mainText.text = "";
 
