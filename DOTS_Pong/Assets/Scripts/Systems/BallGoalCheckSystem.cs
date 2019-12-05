@@ -5,26 +5,32 @@ using Unity.Transforms;
 using UnityEngine;
 using Unity.Collections;
 using Unity.Mathematics;
+using Unity.Jobs;
 
-public class BallGoalCheckSystem : ComponentSystem
+public class BallGoalCheckSystem : JobComponentSystem
 {
-	protected override void OnUpdate()
+	protected override JobHandle OnUpdate(JobHandle inputDeps)
 	{
-		Entities.WithAll<BallTag>().ForEach((Entity entity, ref Translation trans) => 
-		{
+		Entities
+			.WithAll<BallTag>()
+			.WithStructuralChanges()
+			.ForEach((Entity entity, ref Translation trans) =>
+			{
 			float3 pos = trans.Value;
 			float bound = GameManager.main.xBound;
 
 			if (pos.x >= bound)
 			{
 				GameManager.main.PlayerScored(0);
-				PostUpdateCommands.DestroyEntity(entity);
+				EntityManager.DestroyEntity(entity);
 			}
 			else if (pos.x <= -bound)
 			{
 				GameManager.main.PlayerScored(1);
-				PostUpdateCommands.DestroyEntity(entity);
+				EntityManager.DestroyEntity(entity);
 			}
-		});
+		}).Run();
+
+		return inputDeps;
 	}
 }
