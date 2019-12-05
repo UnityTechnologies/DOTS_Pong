@@ -79,9 +79,7 @@ public class GameManager : MonoBehaviour
 	void SpawnBall()
 	{
 		Entity ball = manager.Instantiate(ballEntityPrefab);
-
-		manager.AddComponent(ball, typeof(BallTag));
-
+	
 		Vector3 dir = new Vector3(UnityEngine.Random.Range(0, 2) == 0 ? -1 : 1, UnityEngine.Random.Range(-.5f, .5f), 0f).normalized;
 		Vector3 speed = dir * ballSpeed;
 

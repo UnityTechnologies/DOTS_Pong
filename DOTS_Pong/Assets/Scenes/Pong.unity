@@ -168,7 +168,7 @@ MonoBehaviour:
     type: 3}
   xBound: 8.5
   yBound: 3
-  ballSpeed: 6
+  ballSpeed: 4
   respawnDelay: 2
   playerScores: 
   mainText: {fileID: 182749420}
