@@ -13,22 +13,13 @@ public class PaddleMovementSystem : JobComponentSystem
 		float deltaTime = Time.DeltaTime;
 		float yBound = GameManager.main.yBound;
 
-		JobHandle handle = Entities
-			.WithBurst()
-			.WithReadOnly(deltaTime)
-			.WithReadOnly(yBound)
-			.ForEach((ref Translation trans, in PaddleMovementData data) => 
-		{
-			float3 pos = trans.Value;
-			pos.y += data.speed * data.direction * deltaTime;
+		Entities
+			.ForEach((ref Translation trans, in PaddleMovementData data) =>
+			{
+				trans.Value.y = math.clamp(trans.Value.y + (data.speed * data.direction * deltaTime), -yBound, yBound);
+			}).Run();
 
-			if (pos.y > yBound) pos.y = yBound;
-			if (pos.y < -yBound) pos.y = -yBound;
-
-			trans.Value = pos;
-		}).Schedule(inputDeps);
-
-		return handle;
+		return inputDeps;
 	}
 
 }
