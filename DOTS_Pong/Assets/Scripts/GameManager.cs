@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour
 		playerScores[playerID]++;
 		player0Text.text = playerScores[0].ToString();
 		player1Text.text = playerScores[1].ToString();
-		StartCoroutine(CountdownAndSpawnBall());
+		//StartCoroutine(CountdownAndSpawnBall());
 	}
 
 	IEnumerator CountdownAndSpawnBall()
@@ -73,7 +73,7 @@ public class GameManager : MonoBehaviour
 
 		mainText.text = "";
 
-		SpawnBall();
+		InvokeRepeating("SpawnBall", 0f, .01f);
 	}
 
 	void SpawnBall()
