@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Physics;
@@ -19,8 +18,7 @@ public class GameManager : MonoBehaviour
 	public int[] playerScores;
 
 	public Text mainText;
-	public Text player0Text;
-	public Text player1Text;
+	public Text[] playerTexts;
 
 	Entity ballEntityPrefab;
 	EntityManager manager;
@@ -41,6 +39,7 @@ public class GameManager : MonoBehaviour
 
 		GameObjectConversionSettings settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, null);
 		ballEntityPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(ballPrefab, settings);
+
 		manager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
 		oneSecond = new WaitForSeconds(1f);
@@ -52,8 +51,9 @@ public class GameManager : MonoBehaviour
 	public void PlayerScored(int playerID)
 	{
 		playerScores[playerID]++;
-		player0Text.text = playerScores[0].ToString();
-		player1Text.text = playerScores[1].ToString();
+		for(int i = 0; i < playerScores.Length && i < playerTexts.Length; i++)
+			playerTexts[i].text = playerScores[i].ToString();
+
 		//StartCoroutine(CountdownAndSpawnBall());
 	}
 

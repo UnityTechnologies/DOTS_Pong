@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Unity.Collections;
-using Unity.Entities;
+﻿using Unity.Entities;
 using Unity.Jobs;
 using Unity.Mathematics;
 using Unity.Transforms;
@@ -10,6 +7,8 @@ public class PaddleMovementSystem : JobComponentSystem
 {
 	protected override JobHandle OnUpdate(JobHandle inputDeps)
 	{
+		inputDeps.Complete();
+
 		float deltaTime = Time.DeltaTime;
 		float yBound = GameManager.main.yBound;
 
@@ -19,7 +18,7 @@ public class PaddleMovementSystem : JobComponentSystem
 				trans.Value.y = math.clamp(trans.Value.y + (data.speed * data.direction * deltaTime), -yBound, yBound);
 			}).Run();
 
-		return inputDeps;
+		return new JobHandle();
 	}
 
 }

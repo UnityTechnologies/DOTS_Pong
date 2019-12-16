@@ -1,8 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Unity.Entities;
+﻿using Unity.Entities;
 using Unity.Transforms;
-using UnityEngine;
 using Unity.Collections;
 using Unity.Mathematics;
 using Unity.Jobs;
@@ -11,10 +8,14 @@ public class BallGoalCheckSystem : JobComponentSystem
 {
     protected override JobHandle OnUpdate(JobHandle inputDeps)
     {
-        Entities
+		inputDeps.Complete();
+
+		EntityCommandBuffer ecb = new EntityCommandBuffer(Allocator.TempJob);
+
+		Entities
             .WithAll<BallTag>()
-            .WithStructuralChanges()
-            .ForEach((Entity entity, ref Translation trans) =>
+			.WithoutBurst()
+            .ForEach((Entity entity, in Translation trans) =>
             {
                 float3 pos = trans.Value;
                 float bound = GameManager.main.xBound;
@@ -22,15 +23,18 @@ public class BallGoalCheckSystem : JobComponentSystem
                 if (pos.x >= bound)
                 {
                     GameManager.main.PlayerScored(0);
-                    EntityManager.DestroyEntity(entity);
+					ecb.DestroyEntity(entity);
                 }
                 else if (pos.x <= -bound)
                 {
                     GameManager.main.PlayerScored(1);
-                    EntityManager.DestroyEntity(entity);
+					ecb.DestroyEntity(entity);
                 }
             }).Run();
 
-        return inputDeps;
+		ecb.Playback(EntityManager);
+		ecb.Dispose();
+
+		return new JobHandle();
     }
 }
