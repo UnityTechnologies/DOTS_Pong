@@ -7,10 +7,12 @@ public class IncreaseVelocityOverTimeSystem : JobComponentSystem
 {
 	protected override JobHandle OnUpdate(JobHandle inputDeps)
 	{
+		inputDeps.Complete();
+
 		float deltaTime = Time.DeltaTime;
 
 		Entities
-			.ForEach((ref SpeedIncreaseOverTimeData data, ref PhysicsVelocity vel) =>
+			.ForEach((ref PhysicsVelocity vel, in SpeedIncreaseOverTimeData data) =>
 			{
 				var modifier = new float2(data.increasePerSecond * deltaTime);
 				
@@ -20,6 +22,6 @@ public class IncreaseVelocityOverTimeSystem : JobComponentSystem
 				vel.Linear.xy = newVel;
 			}).Run();
 
-		return inputDeps;
+		return new JobHandle();
 	}
 }
