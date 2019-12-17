@@ -37,10 +37,10 @@ public class GameManager : MonoBehaviour
 		main = this;
 		playerScores = new int[2];
 
+		manager = World.DefaultGameObjectInjectionWorld.EntityManager;
+
 		GameObjectConversionSettings settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, null);
 		ballEntityPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(ballPrefab, settings);
-
-		manager = World.DefaultGameObjectInjectionWorld.EntityManager;
 
 		oneSecond = new WaitForSeconds(1f);
 		delay = new WaitForSeconds(respawnDelay);
@@ -51,7 +51,7 @@ public class GameManager : MonoBehaviour
 	public void PlayerScored(int playerID)
 	{
 		playerScores[playerID]++;
-		for(int i = 0; i < playerScores.Length && i < playerTexts.Length; i++)
+		for (int i = 0; i < playerScores.Length && i < playerTexts.Length; i++)
 			playerTexts[i].text = playerScores[i].ToString();
 
 		StartCoroutine(CountdownAndSpawnBall());
@@ -79,7 +79,7 @@ public class GameManager : MonoBehaviour
 	void SpawnBall()
 	{
 		Entity ball = manager.Instantiate(ballEntityPrefab);
-	
+
 		Vector3 dir = new Vector3(UnityEngine.Random.Range(0, 2) == 0 ? -1 : 1, UnityEngine.Random.Range(-.5f, .5f), 0f).normalized;
 		Vector3 speed = dir * ballSpeed;
 
