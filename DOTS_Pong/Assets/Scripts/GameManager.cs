@@ -26,6 +26,8 @@ public class GameManager : MonoBehaviour
 	WaitForSeconds oneSecond;
 	WaitForSeconds delay;
 
+	BlobAssetStore blob;
+
 	private void Awake()
 	{
 		if (main != null && main != this)
@@ -38,8 +40,9 @@ public class GameManager : MonoBehaviour
 		playerScores = new int[2];
 
 		manager = World.DefaultGameObjectInjectionWorld.EntityManager;
+		blob = new BlobAssetStore();
 
-		GameObjectConversionSettings settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, null);
+		GameObjectConversionSettings settings = GameObjectConversionSettings.FromWorld(World.DefaultGameObjectInjectionWorld, blob);
 		ballEntityPrefab = GameObjectConversionUtility.ConvertGameObjectHierarchy(ballPrefab, settings);
 
 		oneSecond = new WaitForSeconds(1f);
@@ -91,5 +94,10 @@ public class GameManager : MonoBehaviour
 
 		manager.AddComponentData(ball, velocity);
 	}
+
+    private void OnDestroy()
+    {
+		blob.Dispose();
+    }
 }
 
